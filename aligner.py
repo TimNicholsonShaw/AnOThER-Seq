@@ -1,3 +1,5 @@
+import subprocess, os
+
 def queryMaker(readList, outLoc="queryTemp.txt"):
     """
     Takes a counts object (nested list in the form [[read, total, unique],...]) and creates a file formatted for input
@@ -19,8 +21,8 @@ def blaster(counts, dbLoc, blastLoc = "blastn.exe", blastOut="blastTemp.txt"):
     """
     Takes a list of counts in the format [[sequence, total reads, unique],...] then blasts each sequence against the
     RNASeqList (fasta formatted). Matches are appended to the end of each member of the count. Returns this new appended count list.
-    :param counts:
-    :param dbLoc:
+    :param counts: counts object nested list in the format of [[sequence, total reads, unique],...]
+    :param dbLoc: database of reads to blast against
     :param blastLoc:
     :param blastOut:
     :return:
