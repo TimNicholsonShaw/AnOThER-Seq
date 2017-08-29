@@ -73,3 +73,4 @@ def blaster(counts, dbLoc, blastLoc = "blastn.exe", blastOut="blastTemp.txt"):
     return counts
 
 
+checkBLASTdb()
