@@ -16,6 +16,18 @@ def queryMaker(readList, outLoc="queryTemp.txt"):
         f.write(readList[i][0]+"\n")
     f.close()
     return 1
+def getBLASTdb(dbName = "superset_withtRNA.fa"):
+    #if os = mac.....
+    makeblastdbloc = os.path.join(os.path.dirname(__file__),"blast/makeblastdb.exe")
+    databaseloc = os.path.join(os.path.dirname(__file__),"databases/"+dbName)
+    subprocess.call([makeblastdbloc])
+
+
+
+
+
+
+
 
 def blaster(counts, dbLoc, blastLoc = "blastn.exe", blastOut="blastTemp.txt"):
     """
@@ -50,3 +62,6 @@ def blaster(counts, dbLoc, blastLoc = "blastn.exe", blastOut="blastTemp.txt"):
 
     #each count now has the blast hits appended to it
     return counts
+
+
+getBLASTdb()
