@@ -70,7 +70,7 @@ def blaster(counts, database):
     f = open(blastOut, 'r')
     hits = f.readlines()
     f.close()
-    #os.remove(blastOut)
+    os.remove(blastOut)
 
     for line in hits:
         #Each query was given a number by querymaker which corresponds to the index of each count
@@ -104,7 +104,7 @@ def blastTailer(alignedCount, fastaList):
     sequence = alignedCount[0]
     uniqReads = alignedCount [2]
     try: alignment = alignedCount[3]
-    except: return [sequence, uniqReads, "no db match", "N/A", "N/A", "N/A"]
+    except: return [sequence, uniqReads, "no db match", "N/A", "N/A"]
     blastLine = alignment.split('\t')
 
     targetSeq = seqFinder(blastLine[1], fastaList)
