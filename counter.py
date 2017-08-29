@@ -90,29 +90,21 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
 def uniqueNumber(list, mismatch = 0):
     """
     Used to judge how many barcodes are unique. If mismatch is greater than 0, it uses hamming distance to
-    judge how different items are. The algorithm is pretty slow so if the mismatch is greater than 0, things
-    will be unacceptably slow.
+    judge how different items are. The algorithm is slower if the mismatch is greater than 0
     :param list: list of string items
     :param mismatch: how many differences do two items need to have before they are not called duplicates
     :return: int. How many of the items in that list are unique
     """
-    unique = []
+    if not list:
+        return 0
     if not mismatch:
         return len(set(list))
-    #This algorithm is really slow. It needs to be improved
-    for i in range(len(list)):
-        if i == len(list)-1:
-            unique.append (list[i])
-            break
-        flag = False
-        for j in range(i+1, len(list)):
-            if distance.hamming(list[i], list[j]) <= mismatch:
-                flag = True
-                break
-        if not flag:
-            unique.append(list[i])
-
-    return len(unique)
+    #This algorithm is slightly slower than above
+    n=1
+    list = sorted(list)
+    for i in range(len(list)-1):
+        if distance.hamming(list[i], list[i+1]) > mismatch: n+=1
+    return n
 def countReads (inLoc, barcodeLength, outFolder="",mismatch = 0, name = "output"):
     """
     Takes fastq file, removes duplicate reads, condenses sequencing data into a counts file. Returns a list
@@ -138,6 +130,6 @@ def countReads (inLoc, barcodeLength, outFolder="",mismatch = 0, name = "output"
 
 
 start_time =time.time()
-countReads ("siLuc2_S5_L001_R1_001.fastq.gz", outFolder="/Users/Lykke-AndersenLab/Desktop/",barcodeLength=13)
+countReads ("siLuc2_S5_L001_R1_001.fastq.gz", outFolder="/Users/Lykke-AndersenLab/Desktop/",barcodeLength=13, mismatch = 1)
 print(time.time()-start_time)
 

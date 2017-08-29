@@ -1,4 +1,4 @@
-import subprocess, os
+import subprocess, os, platform, sys
 
 def queryMaker(readList, outLoc="queryTemp.txt"):
     """
@@ -15,12 +15,21 @@ def queryMaker(readList, outLoc="queryTemp.txt"):
         f.write(">"+str(i)+"\n")
         f.write(readList[i][0]+"\n")
     f.close()
-    return 1
-def getBLASTdb(dbName = "superset_withtRNA.fa"):
-    #if os = mac.....
-    makeblastdbloc = os.path.join(os.path.dirname(__file__),"blast/makeblastdb.exe")
+    return True
+def checkBLASTdb(dbName = "superset_withtRNA.fa"):
+    """
+    Checks if BLAST indices have been made
+    :param dbName: title of fasta formatted database in databases folder
+    :return:
+    """
     databaseloc = os.path.join(os.path.dirname(__file__),"databases/"+dbName)
-    subprocess.call([makeblastdbloc])
+    if not os.path.isfile(databaseloc+".nhr"):
+        if sys.platform == "darwin": makeblastdbloc = os.path.join(os.path.dirname(__file__), "blast/makeblastdb")
+        elif sys.platform == "windows": makeblastdbloc = os.path.join(os.path.dirname(__file__), "blast/makeblastdb.exe")
+        else:
+            raise Exception ("System is not supported")
+        subprocess.call([makeblastdbloc, "-in", databaseloc, "-dbtype", "nucl"])
+    return True
 
 
 
@@ -64,4 +73,3 @@ def blaster(counts, dbLoc, blastLoc = "blastn.exe", blastOut="blastTemp.txt"):
     return counts
 
 
-getBLASTdb()
