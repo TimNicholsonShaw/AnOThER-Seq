@@ -31,7 +31,7 @@ def checkBLASTdb(dbName = "superset_withtRNA.fa"):
             raise Exception ("System is not supported")
         subprocess.call([makeblastdbloc, "-in", databaseloc, "-dbtype", "nucl"])
     return True
-def blaster(counts, database):
+def blaster(counts, database, outname = "output"):
     """
     Takes a list of counts in the format [[sequence, total reads, unique],...] then blasts each sequence against the
     RNASeqList (fasta formatted). Top match is appended to the end of each member of the count.
@@ -39,8 +39,8 @@ def blaster(counts, database):
     :param dbLoc: database of reads to blast against
     :return: nested list of aligned counts. [[sequence, total reads, unique reads, blast alignment outfmt 6],...]
     """
-    queryLoc = "queryTemp.txt"
-    blastOut = "blastTemp.txt"
+    queryLoc = outname+"queryTemp.txt"
+    blastOut = outname+"blastTemp.txt"
 
     #Set blast location
     if sys.platform == "darwin":
@@ -62,7 +62,7 @@ def blaster(counts, database):
     print("BLASTing...")
     start_time = time.time()
     subprocess.call([blastLoc, '-db', dbLoc , '-query', queryLoc, '-out', blastOut, '-outfmt', '6', '-max_target_seqs', '1'])
-    os.remove("queryTemp.txt")
+    os.remove(queryLoc)
     print("BLAST Successful")
     print("BLAST took "+str(time.time()-start_time)+" seconds")
 
@@ -92,7 +92,6 @@ def seqFinder(name, seqList ):
             return seqList[i][1]
     print (name)
     raise Exception ("Couldn't find the sequence. No idea what happened in seqFinder. Shouldn't have happened")
-
 def blastTailer(alignedCount, fastaList):
     """
     takes an aligned count produced by blaster function. Compares its 3' end to its target sequence and judges
@@ -114,20 +113,26 @@ def blastTailer(alignedCount, fastaList):
 
     return [sequence, uniqReads, blastLine[1], threeEnd, tailLen, tailSeq]
 def tailCalc (alignedCounts, dbName, outFolder="/Users/Lykke-AndersenLab/Desktop/",outName="output"):
+    """
+    takes aligned counts and uses blastTailer algorithm to judge tail lengths. Outputs a list of tail objects.
+    :param alignedCounts: nested list. [[sequence, total reads, unique reads, blast alignment out fmt 6],...]
+    :param dbName: atabase of reads to blast against
+    :param outFolder: str. folder to output files to
+    :param outName: str. name to give otuput
+    :return: nested list. tail objects. [[sequence, unique reads, gene name, 3' end location, tail
+    length, tail sequence],...]
+    """
+    print('Generating tail files...')
     databaseloc = os.path.join(os.path.dirname(__file__), "databases/" + dbName)
     fastaList = tools.seqParser(databaseloc)
     tails = []
     i = 0
     for count in alignedCounts:
-        if i%10000 == 0: print (str(round(i/len(alignedCounts),2)*100)+"%")
+        if i%10000 == 0: print ("{:.0%}".format(i/len(alignedCounts)))
         tails.append(blastTailer(count,fastaList))
         i+=1
 
     tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence, Unique Reads, \
     Gene, 3'Loc,Tail Length, Tail Sequence")
+    return tails
 
-start_time = time.time()
-counts = counter.countReads("siLuc2_S5_L001_R1_001.fastq.gz", outFolder="/Users/Lykke-AndersenLab/Desktop/",barcodeLength=13, mismatch = 0)
-alignedCounts = blaster(counts, "superset_withtRNA.fa")
-tailCalc(alignedCounts, "superset_withtRNA.fa")
-print(time.time()-start_time)

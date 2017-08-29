@@ -63,7 +63,7 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
         tempBarcodes = []
         currRead = barcoded[0][0]
         for i in range(len(barcoded)):
-            if i %100000 == 0: print (str(round(i/len(barcoded),2)*100)+"%")
+            if i %100000 == 0: print ("{:.0%}".format((i/len(barcoded))))
             if barcoded[i][0] == currRead:
                 tempBarcodes.append(barcoded[i][1])
             else:
@@ -78,7 +78,7 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
         currRead = readList[0]
         n=0
         for i in range(len(readList)):
-            if i%100000 == 0: print (str(round(i/len(readList),2)*100)+"%")
+            if i%100000 == 0: print ("{:.0%}".format(i/len(readList)))
             if readList[i] ==  currRead:
                 n+=1
             else:

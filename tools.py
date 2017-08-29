@@ -49,3 +49,25 @@ def countsin(inLoc):
         temp = countFile[i].rstrip().split(",")
         counts.append([temp[0][8:], temp[1], temp[2]])
     return counts
+def tailParser(inLoc):
+    """
+    parses .tail file into a nested list usable by other modules
+    :param inLoc: CSV input .tail file as produced by aligner.tailcalc
+    :return: nested list. [[sequence, #reads, gene, 3'end, tail len, tail seq],...]
+    """
+    f = open(inLoc, 'r')
+    tails = f.readlines()
+    f.close()
+
+    tailList = []
+
+    for i in range(len(tails)):
+        if i==0: continue #skips the header
+        line = tails[i].rstrip().split(',')
+        tailList.append(line)
+    return tailList
+def repeater(item, list, reps):
+    '''Takes an item and a list and then adds a copy of the item to the list reps number of times.'''
+    for i in range(reps):
+        list.append(item)
+    return
