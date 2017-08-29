@@ -1,11 +1,11 @@
-import gzip, distance, time
-from tools import CSVWriter
+import gzip, distance
+from tools import CSVWriter, countsin
 
 
 def reverseComplement(read):
     """
-    :param read: a read in string format
-    :return: the reverse complement of that read in string format
+    :param str. a read in string format
+    :return: str. the reverse complement of that read in string format
     """
     comp=[]
 
@@ -20,26 +20,27 @@ def reverseComplement(read):
     return(comp)
 def fastqParser(fileLoc, revComp = True):
     """
-    Reads a fastq formatted file and returns a list of reads in string format
-    :param fileLoc: fastq file, reads are assumed to be represented as 4 lines, the second of which is the basecall
+    Reads a fastq formatted file and returns a list of reads in string format.
+    :param fileLoc: fastq file, reads are assumed to be represented as 4 lines, the second of which is the basecall.
+    Can take .gz compressed files.
     :param revComp: default True, should the function return the reverse complement of the reads
     :return: list of reads in string format
     """
-    if fileLoc[-3:] == ".gz":
+
+    if fileLoc[-3:] == ".gz": #Checks if file is compressed by .gz format
         fastq = gzip.open(fileLoc, 'rt').readlines()
     else:
         fastq = open(fileLoc, 'r').readlines()
     reads =[]
 
-
-    for i in range(len(fastq)):
+    for i in range(len(fastq)): #Assumes fastq files represent reads as 4 lines, the second of which are the basecalls
             if revComp:
                 if (i - 1) % 4 == 0:
                     reads.append(reverseComplement(fastq[i].rstrip()))
             else:
                 if (i - 1) % 4 == 0:
                     reads.append(fastq[i].rstrip())
-    if not reads[-1]: reads = reads[:-1]
+    if not reads[-1]: reads = reads[:-1] #Sometimes adds empty string at the end of the list. This removes it.
     return reads
 def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
     """
@@ -62,7 +63,7 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
         tempBarcodes = []
         currRead = barcoded[0][0]
         for i in range(len(barcoded)):
-            if i %100000 == 0: print (i/len(barcoded))
+            if i %100000 == 0: print (str(round(i/len(barcoded),2)*100)+"%")
             if barcoded[i][0] == currRead:
                 tempBarcodes.append(barcoded[i][1])
             else:
@@ -77,7 +78,7 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
         currRead = readList[0]
         n=0
         for i in range(len(readList)):
-            if i%100000 == 0: print (i/len(readList))
+            if i%100000 == 0: print (str(round(i/len(readList),2)*100)+"%")
             if readList[i] ==  currRead:
                 n+=1
             else:
@@ -97,7 +98,7 @@ def uniqueNumber(list, mismatch = 0):
     """
     if not list:
         return 0
-    if not mismatch:
+    if not mismatch: #Much faster to do it this way if barcodes have to perfectly match
         return len(set(list))
     #This algorithm is slightly slower than above
     n=1
@@ -108,7 +109,8 @@ def uniqueNumber(list, mismatch = 0):
 def countReads (inLoc, barcodeLength, outFolder="",mismatch = 0, name = "output"):
     """
     Takes fastq file, removes duplicate reads, condenses sequencing data into a counts file. Returns a list
-    object. Can also write into a counts file for faster processing later.
+    object. Can also write into a counts file for faster processing later. Can take a counts file as an input. Will be
+    much faster
     :param inLoc: str. fastq formatted file
     :param outFolder: str. optional. folder to output into. Be sure to include delimiter at the end
     :param barcodeLength: int. length of the barcode at the 3' end of the read. Used to judge duplicate reads
@@ -118,6 +120,13 @@ def countReads (inLoc, barcodeLength, outFolder="",mismatch = 0, name = "output"
     prints to outFolder location.
     """
     print('Reading in from ' + inLoc)
+
+    #If given a counts file, it will just read it in without any fancy maths
+    if inLoc.endswith(".counts"):
+        reads = countsin(inLoc)
+        print("File read in successful")
+        print("You used a counts file, so mismatch and barcodelength options don't matter")
+        return reads
     reads = fastqParser(inLoc)
     print('Counting...')
     reads = uniqueFilter(reads, barcodeLength, barcodeMismatch = mismatch)
@@ -125,11 +134,4 @@ def countReads (inLoc, barcodeLength, outFolder="",mismatch = 0, name = "output"
     if outFolder:
         CSVWriter(reads, outFolder+name+".counts", header="Sequence,Total Reads,Unique Reads")
     return reads
-
-
-
-
-start_time =time.time()
-countReads ("siLuc2_S5_L001_R1_001.fastq.gz", outFolder="/Users/Lykke-AndersenLab/Desktop/",barcodeLength=13, mismatch = 1)
-print(time.time()-start_time)
 

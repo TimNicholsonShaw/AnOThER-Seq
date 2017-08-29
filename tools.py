@@ -35,7 +35,7 @@ def seqParser(seqLoc):
     RNAseqlist = []
     for i in range(0, len(RNAseqs)):
         if RNAseqs[i][0] == ">":
-            RNAseqlist.append([RNAseqs[i].rstrip(),RNAseqs[i+1].rstrip()])
+            RNAseqlist.append([RNAseqs[i].rstrip()[1:],RNAseqs[i+1].rstrip()])
     return RNAseqlist
 def countsin(inLoc):
     """
