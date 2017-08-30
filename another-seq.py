@@ -4,11 +4,11 @@ import counter, aligner
 
 
 if __name__ == "__main__":
-    inLoc = "NoctWT_S3_L001_R1_001.fastq.gz"
-    barcodeLength = 13
-    outFolder = "/Users/Lykke-AndersenLab/Desktop/"
+    inLoc = "siNoct_S2_L001_R1_001.fastq.gz"
+    barcodeLength = 12
+    outFolder = "/Users/Lykke-AndersenLab/Dropbox/NoctData/"
     database = "superset_withtRNA.fa"
-    name = "NoctWT"
+    name = "siNoct"
     allowedmismatch = 1
 
 

@@ -112,7 +112,7 @@ def blastTailer(alignedCount, fastaList):
     tailSeq = sequence[int(blastLine[7]):]
 
     return [sequence, uniqReads, blastLine[1], threeEnd, tailLen, tailSeq]
-def tailCalc (alignedCounts, dbName, outFolder="/Users/Lykke-AndersenLab/Desktop/",outName="output"):
+def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
     """
     takes aligned counts and uses blastTailer algorithm to judge tail lengths. Outputs a list of tail objects.
     :param alignedCounts: nested list. [[sequence, total reads, unique reads, blast alignment out fmt 6],...]
