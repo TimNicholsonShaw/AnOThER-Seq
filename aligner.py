@@ -132,7 +132,6 @@ def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
         tails.append(blastTailer(count,fastaList))
         i+=1
 
-    tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence, Unique Reads, \
-    Gene, 3'Loc,Tail Length, Tail Sequence")
+    tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence,UniqueReads,Gene,3Loc,TailLength,TailSequence")
     return tails
 
