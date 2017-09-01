@@ -85,7 +85,8 @@ def pdTailMaker(inLoc):
     tails = tailParser(inLoc)
     pdTails = []
     for tail in tails:
-        repeater([tail[2],tail[3],tail[4],tail[5]],pdTails,int(tail[1]))
-    return pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq'])
-
+        type = tail[2][tail[2].find("|")+1:]
+        repeater([tail[2],tail[3],tail[4],tail[5],type],pdTails,int(tail[1]))
+    print(pdTails[1])
+    return pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq', type])
 
