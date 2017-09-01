@@ -67,6 +67,7 @@ if __name__=="__main__":
     if manifestLoc.endswith(".xlsx") or manifestLoc.endswith(".xls") or manifestLoc.endswith(".xlm"):
         flag = True
         csv_from_excel(manifestLoc)
+    if flag == True: manifestLoc = "temp.csv"
     r1 = counter.fastqParser(r1Loc)
     r2 = counter.fastqParser(r2Loc, revComp=False)
     assert len(r1) == len (r2)

@@ -1,3 +1,4 @@
+import pandas as pd
 def CSVWriter (iterable, outLoc, header="", ):
     """
     Writes an iterable to a CSV file.
@@ -71,3 +72,20 @@ def repeater(item, list, reps):
     for i in range(reps):
         list.append(item)
     return
+
+
+
+
+
+
+def pdTailMaker(inLoc):
+    """
+    Takes standard tail file and returns a pandas dataframe
+    """
+    tails = tailParser(inLoc)
+    pdTails = []
+    for tail in tails:
+        repeater([tail[2],tail[3],tail[4],tail[5]],pdTails,int(tail[1]))
+    return pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq'])
+
+

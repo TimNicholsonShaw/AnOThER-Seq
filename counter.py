@@ -56,6 +56,7 @@ def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):
     """
     barcoded = []
     counts = []
+    if not readList: return counts
     if barcodeLength:
         for read in readList:
             barcoded.append([read[:-barcodeLength],read[-barcodeLength:]])
