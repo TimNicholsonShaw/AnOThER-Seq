@@ -73,11 +73,6 @@ def repeater(item, list, reps):
         list.append(item)
     return
 
-
-
-
-
-
 def pdTailMaker(inLoc):
     """
     Takes standard tail file and returns a pandas dataframe
@@ -87,6 +82,7 @@ def pdTailMaker(inLoc):
     for tail in tails:
         type = tail[2][tail[2].find("|")+1:]
         repeater([tail[2],tail[3],tail[4],tail[5],type],pdTails,int(tail[1]))
-    print(pdTails[1])
-    return pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq', type])
+    df = pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq', 'Type'])
+    df[['3Loc','TailLength']] = df[['3Loc','TailLength']].apply(pd.to_numeric,errors='coerce')
+    return df
 
