@@ -26,7 +26,7 @@ def checkBLASTdb(dbName = "superset_withtRNA.fa"):
     databaseloc = os.path.join(os.path.dirname(__file__),"databases/"+dbName)
     if not os.path.isfile(databaseloc+".nhr"):
         if sys.platform == "darwin": makeblastdbloc = os.path.join(os.path.dirname(__file__), "blast/makeblastdb")
-        elif sys.platform == "windows": makeblastdbloc = os.path.join(os.path.dirname(__file__), "blast/makeblastdb.exe")
+        elif sys.platform.startswith("win"): makeblastdbloc = os.path.join(os.path.dirname(__file__), "blast/makeblastdb.exe")
         else:
             raise Exception ("System is not supported")
         subprocess.call([makeblastdbloc, "-in", databaseloc, "-dbtype", "nucl"])
@@ -45,7 +45,7 @@ def blaster(counts, database, outname = "output"):
     #Set blast location
     if sys.platform == "darwin":
         blastLoc = os.path.join(os.path.dirname(__file__), "blast/blastn")
-    elif sys.platform == "windows":
+    elif sys.platform.startswith("win"):
         blastLoc = os.path.join(os.path.dirname(__file__), "blast/blastn.exe")
     else:
         raise Exception("System is not supported")
@@ -134,4 +134,3 @@ def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
 
     tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence,UniqueReads,Gene,3Loc,TailLength,TailSequence")
     return tails
-
