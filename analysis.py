@@ -1,6 +1,7 @@
 import tools
 from scipy import stats
 import numpy as np
+import pandas as pd
 
 def getNames(tails):
     """
@@ -170,3 +171,15 @@ def getCumulativeTail(tails, transcript, min=-10, max=10):
             y.append(0)
 
     return (x,y)
+
+if __name__=="__main__":
+    outFolder = "/Users/Lykke-AndersenLab/PycharmProjects/AnoThER-Seq/"
+    minLen = -10
+    maxLen = 10
+    tail1 = tools.tailParser('siLuc.tails')
+    tail1 = tailFilter(tail1, max3End=minLen, maxTail=maxLen)
+    tail2 = tools.tailParser('siNoct.tails')
+    tail2 = tailFilter(tail2, max3End=minLen, maxTail=maxLen)
+    tail3 = tools.tailParser('NoctWT.tails')
+    tail3 = tailFilter(tail3, max3End=minLen,maxTail=maxLen)
+    getCandidates(tail1,tail2,outFolder=outFolder,outName="LucVsNoct.csv")
