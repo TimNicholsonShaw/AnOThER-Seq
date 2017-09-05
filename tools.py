@@ -86,3 +86,9 @@ def pdTailMaker(inLoc):
     df[['3Loc','TailLength']] = df[['3Loc','TailLength']].apply(pd.to_numeric,errors='coerce')
     return df
 
+def tailpdtoTPM(df):
+    out = []
+    for index, row in df.iterrows():
+        out.append([row.lat,row.long])
+
+
