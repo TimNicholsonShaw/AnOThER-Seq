@@ -81,14 +81,12 @@ def pdTailMaker(inLoc):
     pdTails = []
     for tail in tails:
         type = tail[2][tail[2].find("|")+1:]
-        repeater([tail[2],tail[3],tail[4],tail[5],type],pdTails,int(tail[1]))
+        name = tail[2][:tail[2].find("|")]
+        repeater([name,tail[3],tail[4],tail[5],type],pdTails,int(tail[1]))
     df = pd.DataFrame(pdTails,columns=['Gene','3Loc','TailLength','TailSeq', 'Type'])
     df[['3Loc','TailLength']] = df[['3Loc','TailLength']].apply(pd.to_numeric,errors='coerce')
     return df
 
-def tailpdtoTPM(df):
-    out = []
-    for index, row in df.iterrows():
-        out.append([row.lat,row.long])
+
 
 
