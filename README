@@ -1,1 +1,31 @@
-Blah
+AnoThER-Seq 1.0
+
+A pipeline developed by the Lykke-Andersen Lab for the analysis of changes in the 3' end of small RNAs.
+
+Library preparation used with this pipeline:
+- 3' linker ligation (with random 3' sequence to remove duplicates)
+- Reverse Transcription
+- 5' Linker ligation
+- PCR to add illumina indexes
+- Size selection for 50-500nt
+
+No fragmentation is done in order to preserve the 3' ends of each read.
+
+This pipeline uses read1 to find random the random nucleotide sequence appended to the 3' end of the RNA during library
+preparation and removes duplicate reads. A .count file is created (CSV type) of unique sequences in the form
+[Sequence, Total Reads, Unique Reads]. The counts are aligned using the BLAST algorithm to a database in the databases
+folder that can be specified. Using the alignments, the 3' composition of each read is judged and a .tail file is created
+with that information. The .tail file is CSV formatted with headers [sequence, unique reads, gene name, 3' end location,
+tail length, tail sequence]. The tail file can be used for downstream analysis. Examples of how analysis functions can
+be used can be found in the notebook folder.
+
+Mandatory arguments:
+    -i: fastq file location. Use read 1.
+    -o: Folder to put counts file and tail file into. Make sure it ends with the file delimiter
+    -b: Length of random mer. Total length of added nucleotides. AG10 = 12, AG11 = 13, can be 0 if nothing is added
+
+Optional arguments
+    -db: Name of database to use. Must be in databases folder. superset_withtRNA.fa is the default
+    -n: Name to give files. Default is "output"
+    -m: Allowed mismatch in the random barcode. Default is 1. If random barcode has 1 difference between eachother,
+        they'll be called duplicates
