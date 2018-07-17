@@ -61,7 +61,7 @@ def blaster(counts, database, outname = "output"):
 
     print("BLASTing...")
     start_time = time.time()
-    subprocess.call([blastLoc, '-db', dbLoc , '-query', queryLoc, '-out', blastOut, '-outfmt', '6', '-max_target_seqs', '1'])
+    subprocess.call([blastLoc, '-db', dbLoc , '-query', queryLoc, '-out', blastOut, '-outfmt', '6'])
     os.remove(queryLoc)
     print("BLAST Successful")
     print("BLAST took "+str(time.time()-start_time)+" seconds")
@@ -70,14 +70,32 @@ def blaster(counts, database, outname = "output"):
     f = open(blastOut, 'r')
     hits = f.readlines()
     f.close()
-    os.remove(blastOut)
+    #os.remove(blastOut)
 
+    flag = -1
     for line in hits:
         #Each query was given a number by querymaker which corresponds to the index of each count
         #Each hit also has this index so a hit can be assigned to a count by that index
         templine = line.split('\t')
         i = int(templine[0])
+        if i<=flag: continue
         counts[i].append(line.rstrip())
+        flag=i
+    namehits = [""]*len(counts)
+    scores = [0]*len(counts)
+    for line in hits:
+        templine = line.split('\t')
+        i = int(templine[0])
+        score = float(templine[11].rstrip())
+        name = templine[1]
+
+        if score>=scores[i]:
+            namehits[i]+=" | "+name
+            scores[i]=score
+    for i in range(len(namehits)):
+        if namehits[i]: counts[i].append(namehits[i][3:])
+
+
     #each count now has its BLAST hit appended to it
     return counts
 def seqFinder(name, seqList ):
@@ -102,8 +120,9 @@ def blastTailer(alignedCount, fastaList):
     """
     sequence = alignedCount[0]
     uniqReads = alignedCount [2]
-    try: alignment = alignedCount[3]
-    except: return [sequence, uniqReads, "no db match", "N/A", "N/A"]
+    if len(alignedCount)!=5: return [sequence, uniqReads, "no db match", "N/A", "N/A"]
+    alignment = alignedCount[3]
+
     blastLine = alignment.split('\t')
 
     targetSeq = seqFinder(blastLine[1], fastaList)
@@ -111,7 +130,7 @@ def blastTailer(alignedCount, fastaList):
     tailLen = len(sequence) - int(blastLine[7])
     tailSeq = sequence[int(blastLine[7]):]
 
-    return [sequence, uniqReads, blastLine[1], threeEnd, tailLen, tailSeq,len(targetSeq)]
+    return [sequence, uniqReads, alignedCount[4], threeEnd, tailLen, tailSeq,blastLine[4]]
 def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
     """
     takes aligned counts and uses blastTailer algorithm to judge tail lengths. Outputs a list of tail objects.
@@ -132,5 +151,16 @@ def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
         tails.append(blastTailer(count,fastaList))
         i+=1
 
-    tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence,UniqueReads,Gene,3Loc,TailLength,TailSequence")
+    tools.CSVWriter(tails, outFolder+outName+".tails", header="Sequence,UniqueReads,Gene,3Loc,TailLength,TailSequence,Mismatches")
     return tails
+
+
+if __name__ == "__main__":
+
+    database = "ReaDB2.fa"
+    name = "output"
+    allowedmismatch = 1
+
+    counts = tools.countsin("/Users/tlshaw/Desktop/FU1-Vs-08_counts.csv")
+    alignedCounts = blaster(counts, database, outname="FU1-Vs-08_Tim")
+    tailCalc(alignedCounts, database, outFolder="/Users/tlshaw/Desktop/", outName="FU1-Vs-08_Tim")

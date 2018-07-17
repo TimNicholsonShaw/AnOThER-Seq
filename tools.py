@@ -87,6 +87,13 @@ def pdTailMaker(inLoc):
     df[['3Loc','TailLength']] = df[['3Loc','TailLength']].apply(pd.to_numeric,errors='coerce')
     return df
 
+def Ten_vs_Eleven_Finder(read):
+    print(read[::-1])
 
 
 
+
+
+
+if __name__=="__main__":
+    Ten_vs_Eleven_Finder("CTCTCTAGAGGGCCGGCC")

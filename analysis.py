@@ -171,15 +171,47 @@ def getCumulativeTail(tails, transcript, min=-10, max=10):
             y.append(0)
 
     return (x,y)
+def geneSepCumulative(inLoc, gene,start,stop):
+
+    out=[]
+    total = 0
+
+    Xbois = list(range(start,stop+1))
+    Ybois = [0]*len(Xbois)
+
+    for line in open(inLoc):
+        if line.startswith("Seq"): continue
+        if gene not in line: continue
+        line=line.rstrip().split(",")
+        reads = int(line[1])
+
+        total+=reads
+
+
+    for line in open(inLoc):
+        if line.startswith("Seq"):continue
+        if gene not in line: continue
+        line = line.rstrip().split(",")
+        reads = int(line[1])
+        pos = int(line[3])
+        for i in range(len(Xbois)):
+            if pos<=Xbois[i]:
+                Ybois[i]+=reads
+    return [y/total for y in Ybois]
+
+
+
+
+
+
+
 
 if __name__=="__main__":
-    outFolder = "/Users/Lykke-AndersenLab/PycharmProjects/AnoThER-Seq/"
-    minLen = -10
-    maxLen = 10
-    tail1 = tools.tailParser('siLuc.tails')
-    tail1 = tailFilter(tail1, max3End=minLen, maxTail=maxLen)
-    tail2 = tools.tailParser('siNoct.tails')
-    tail2 = tailFilter(tail2, max3End=minLen, maxTail=maxLen)
-    tail3 = tools.tailParser('NoctWT.tails')
-    tail3 = tailFilter(tail3, max3End=minLen,maxTail=maxLen)
-    getCandidates(tail1,tail2,outFolder=outFolder,outName="LucVsNoct.csv")
+    inLoc = "/Users/tlshaw/Desktop/FU1-Vs-08_Tim.csv"
+    gene = "ex1-2-WTd-TCTT"
+    start=-100
+    stop=0
+    #1 #3
+
+    for x in geneSepCumulative(inLoc,gene,start,stop):
+        print(x)

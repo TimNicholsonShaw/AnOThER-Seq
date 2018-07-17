@@ -1,4 +1,4 @@
-import counter, aligner,sys
+import counter, aligner,sys, tools
 
 
 
@@ -7,7 +7,7 @@ import counter, aligner,sys
 
 
 if __name__ == "__main__":
-    database = "superset_withtRNA.fa"
+    database = "ReaDB.fa"
     name = "output"
     allowedmismatch = 1
 
@@ -30,7 +30,7 @@ if __name__ == "__main__":
         they'll be called duplicates
 
     """
-
+    """
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-i': inLoc = sys.argv[x+1]
         if sys.argv[x] == '-o': outFolder = sys.argv[x+1]
@@ -47,3 +47,8 @@ if __name__ == "__main__":
     counts = counter.countReads(inLoc, barcodeLength, outFolder=outFolder, mismatch=allowedmismatch, name=name)
     alignedCounts=aligner.blaster(counts, database, outname = name)
     aligner.tailCalc(alignedCounts, database, outFolder=outFolder, outName=name)
+    """
+    counts = tools.countsin("/Users/tlshaw/Desktop/FU1-Vs-08_counts.csv")
+    alignedCounts = aligner.blaster(counts, database, outname="FU1-Vs-08_Tim")
+    aligner.tailCalc(alignedCounts, database, outFolder="/Users/tlshaw/Desktop/", outName="FU1-Vs-08_Tim")
+    

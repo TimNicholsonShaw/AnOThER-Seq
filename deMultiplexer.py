@@ -13,11 +13,25 @@ def hitFinder(target, r1, r2):
     :return: list of reads
     """
     hits = []
+
     for i in range(0, len(r2)):
         if target in r2[i]:
             hits.append(r1[i])
 
     return hits
+
+def hitFinder2 (target, r1, r2):
+    hits = []
+
+    for i in range(0, len(r2)):
+
+        if len(target) > len(r2[i]): continue
+
+        if target == r2[i][:len(target)]:
+            hits.append(r1[i])
+
+    return hits
+
 def deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=0):
     """
     Takes the name of the sample, the barcode sequence, and the length of the randomMer. Finds the barcode in read1,
@@ -54,6 +68,7 @@ if __name__=="__main__":
     -m: Manifest location
     -o: Folder to put output files into
     """
+    
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r1': r1Loc = sys.argv[x+1]
         if sys.argv[x] == '-r2': r2Loc = sys.argv[x+1]
@@ -61,13 +76,14 @@ if __name__=="__main__":
         if sys.argv[x] == '-o' : outFolder = sys.argv[x+1]
         if sys.argv[x] == '-h': print(help);sys.exit()
 
-    header = True
-    flag = False
+    header = True #Does the manifest have a header
 
+    flag = False
     if manifestLoc.endswith(".xlsx") or manifestLoc.endswith(".xls") or manifestLoc.endswith(".xlm"):
         flag = True
         csv_from_excel(manifestLoc)
     if flag == True: manifestLoc = "temp.csv"
+
     r1 = counter.fastqParser(r1Loc)
     r2 = counter.fastqParser(r2Loc, revComp=False)
     assert len(r1) == len (r2)
