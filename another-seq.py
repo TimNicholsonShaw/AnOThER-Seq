@@ -7,7 +7,7 @@ import counter, aligner,sys, tools
 
 
 if __name__ == "__main__":
-    database = "ReaDB.fa"
+    database = "superset_withtRNA.fa"
     name = "output"
     allowedmismatch = 1
 
@@ -42,13 +42,16 @@ if __name__ == "__main__":
         if sys.argv[x] == '-h': print(help);sys.exit()
 
 
+"""
+    #drop later
+    inLoc = ("/Users/tlshaw/Desktop/A1_Clip.A1_IP.umi.r1TrTr.fq")
+    barcodeLength=0
+    outFolder = "/Users/tlshaw/Desktop/test/"
+    allowedmismatch = 0
+    name = "A1_clip"
+    #
 
 
     counts = counter.countReads(inLoc, barcodeLength, outFolder=outFolder, mismatch=allowedmismatch, name=name)
     alignedCounts=aligner.blaster(counts, database, outname = name)
     aligner.tailCalc(alignedCounts, database, outFolder=outFolder, outName=name)
-    """
-    counts = tools.countsin("/Users/tlshaw/Desktop/FU1-Vs-08_counts.csv")
-    alignedCounts = aligner.blaster(counts, database, outname="FU1-Vs-08_Tim")
-    aligner.tailCalc(alignedCounts, database, outFolder="/Users/tlshaw/Desktop/", outName="FU1-Vs-08_Tim")
-    

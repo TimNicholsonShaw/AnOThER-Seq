@@ -46,7 +46,7 @@ def deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=0):
     :return:
     """
     print(name, barcode, ranMerLen)
-    hits = hitFinder(barcode, r1, r2)
+    hits = hitFinder2(barcode, r1, r2)
 
     counts = counter.uniqueFilter(readList=hits, barcodeLength=ranMerLen,barcodeMismatch=mismatch)
     return counts
