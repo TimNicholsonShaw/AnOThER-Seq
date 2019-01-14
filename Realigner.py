@@ -157,10 +157,13 @@ def tailCalc (alignedCounts, dbName, outFolder="",outName="output"):
 
 if __name__ == "__main__":
 
-    database = "ReaDB2.fa"
-    name = "output"
-    allowedmismatch = 1
+    base_dir = "/Users/tlshaw/Desktop/Rea/"
 
-    counts = tools.countsin("/Users/tlshaw/Desktop/FU1-Vs-08_counts.csv")
-    alignedCounts = blaster(counts, database, outname="FU1-Vs-08_Tim")
-    tailCalc(alignedCounts, database, outFolder="/Users/tlshaw/Desktop/", outName="FU1-Vs-08_Tim")
+    database = "superset_withtRNA.fa"
+    name = "output"
+
+    counts = tools.countsin2(base_dir + "U1-v15+16-01_counts.csv_Human snRNA sequences-190111_Taildata.csv")
+
+    print(counts[0])
+    alignedCounts = blaster(counts, database, outname="U1-v15")
+    tailCalc(alignedCounts, database, outFolder=base_dir, outName="U1-v15")

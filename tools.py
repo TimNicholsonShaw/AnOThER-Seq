@@ -90,6 +90,19 @@ def pdTailMaker(inLoc):
 def Ten_vs_Eleven_Finder(read):
     print(read[::-1])
 
+def countsin2(inLoc):
+    """
+    Takes saved count file and reads it into a counts nested list.
+    :param inLoc: counts file
+    :return: nested list. counts nested list. [[read, total number, unique number],...]
+    """
+    countFile = open(inLoc, "r").readlines()
+    counts = []
+    for i in range(1, len(countFile)):
+        temp = countFile[i].rstrip().split(",")
+        counts.append([temp[0], temp[1], temp[2]])
+    return counts
+
 
 
 

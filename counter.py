@@ -36,10 +36,10 @@ def fastqParser(fileLoc, revComp = True):
     for i in range(len(fastq)): #Assumes fastq files represent reads as 4 lines, the second of which are the basecalls
             if revComp:
                 if (i - 1) % 4 == 0:
-                    reads.append(reverseComplement(fastq[i].rstrip()))
+                    reads.append(reverseComplement(fastq[i].upper().rstrip()))
             else:
                 if (i - 1) % 4 == 0:
-                    reads.append(fastq[i].rstrip())
+                    reads.append(fastq[i].upper().rstrip())
     if not reads[-1]: reads = reads[:-1] #Sometimes adds empty string at the end of the list. This removes it.
     return reads
 def uniqueFilter(readList, barcodeLength, barcodeMismatch =0):

@@ -22,7 +22,7 @@ be used can be found in the notebook folder.
 Mandatory arguments:
     -i: fastq file location. Use read 1.
     -o: Folder to put counts file and tail file into. Make sure it ends with the file delimiter
-    -b: Length of random mer. Total length of added nucleotides. AG10 = 12, AG11 = 13, can be 0 if nothing is added
+    -b: Length of random mer. Total length of added nucleotides. AG10 = 10, AG11 = 11, can be 0 if nothing is added
 
 Optional arguments
     -db: Name of database to use. Must be in databases folder. superset_withtRNA.fa is the default

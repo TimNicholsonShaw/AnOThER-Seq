@@ -57,17 +57,17 @@ def csv_from_excel(inLoc):
 
 ########################################################################################################################
 
-
+"""
 if __name__=="__main__":
 
     help = """
-    Takes 2 read files and a manifest file. Finds barcoded reads and outputs them as a counts file.
-    Mandatory arguments:
-    -r1: Read1 Location. Fastq format, gz compressed or not.
-    -r2: Read2 Location. Fastq format, gz compressed or not.
-    -m: Manifest location
-    -o: Folder to put output files into
-    """
+    #Takes 2 read files and a manifest file. Finds barcoded reads and outputs them as a counts file.
+    #Mandatory arguments:
+    #-r1: Read1 Location. Fastq format, gz compressed or not.
+    #-r2: Read2 Location. Fastq format, gz compressed or not.
+    #-m: Manifest location
+    #-o: Folder to put output files into
+"""
     
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r1': r1Loc = sys.argv[x+1]
@@ -102,3 +102,30 @@ if __name__=="__main__":
         tools.CSVWriter(counts2,outLoc=outFolder+name+"_counts.csv",header="Sequence,TotalReads,UniqueReads")
 
     if flag: os.remove("temp.csv")
+"""
+base_dir = "/Users/tlshaw/Desktop/Rea/"
+r1Loc = base_dir + "501705_S2_L001_R1_001.fastq.gz"
+r2Loc = base_dir + "501705_S2_L001_R2_001.fastq.gz"
+manifestLoc = base_dir + "501705.csv"
+outFolder = base_dir
+
+
+r1 = counter.fastqParser(r1Loc)
+print(type(r1))
+r2 = counter.fastqParser(r2Loc, revComp=False)
+assert len(r1) == len (r2)
+
+header=True
+manifest = open(manifestLoc, 'r')
+if header: next(manifest)  # skips header
+for line in manifest:
+    line = line.split(",")
+    name = line[0]
+    barcode = line[2].rstrip().upper() + line[3].rstrip().upper()
+    ranMerLen = int(line[4]) + 2
+    counts = deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=1)
+    counts2 = []
+    for count in counts:
+        counts2.append([count[0][len(line[2].rstrip()):], count[1], count[2]])
+    tools.CSVWriter(counts2, outLoc=outFolder + name + "_counts.csv", header="Sequence,TotalReads,UniqueReads")
+
