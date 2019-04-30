@@ -162,8 +162,7 @@ if __name__ == "__main__":
     database = "superset_withtRNA.fa"
     name = "output"
 
-    counts = tools.countsin2(base_dir + "U1-v15+16-01_counts.csv_Human snRNA sequences-190111_Taildata.csv")
+    counts = tools.countsin2(base_dir + "U1-v15+16-06_counts.csv")
 
-    print(counts[0])
-    alignedCounts = blaster(counts, database, outname="U1-v15")
-    tailCalc(alignedCounts, database, outFolder=base_dir, outName="U1-v15")
+    alignedCounts = blaster(counts, database, outname="U1-v15+16-06_counts_tails.csv")
+    tailCalc(alignedCounts, database, outFolder=base_dir, outName="U1-v15+16-06_counts_tails.csv")

@@ -1,5 +1,6 @@
 import counter, tools, sys, os
 import pandas as pd
+import re
 
 def hitFinder(target, r1, r2):
     """
@@ -55,9 +56,20 @@ def csv_from_excel(inLoc):
     df = xls.parse(sheetname="Sheet1", index_col=None, na_values=['NA'])
     df.to_csv('temp.csv', index=False)
 
+
+def multipleLigationTrim(read, ranmer):
+    patt = re.compile("AG[ATGC]{" + str(ranmer) + "}AGATCGGAAGAG")
+
+    match = patt.search(read)
+
+    if not match:
+        return read
+    else:
+        return read[:match.start()]
+
 ########################################################################################################################
 
-"""
+
 if __name__=="__main__":
 
     help = """
@@ -98,7 +110,9 @@ if __name__=="__main__":
         counts = deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=1)
         counts2 = []
         for count in counts:
-            counts2.append([count[0][len(line[2].rstrip()):],count[1],count[2]])
+            temp_count = count[0][len(line[2].rstrip()):]
+            temp_count = multipleLigationTrim(temp_count, ranMerLen-2)
+            counts2.append([temp_count,count[1],count[2]])
         tools.CSVWriter(counts2,outLoc=outFolder+name+"_counts.csv",header="Sequence,TotalReads,UniqueReads")
 
     if flag: os.remove("temp.csv")
@@ -129,3 +143,4 @@ for line in manifest:
         counts2.append([count[0][len(line[2].rstrip()):], count[1], count[2]])
     tools.CSVWriter(counts2, outLoc=outFolder + name + "_counts.csv", header="Sequence,TotalReads,UniqueReads")
 
+"""
