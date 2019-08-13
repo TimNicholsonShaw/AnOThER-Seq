@@ -81,18 +81,13 @@ if __name__=="__main__":
     #-o: Folder to put output files into
 """
 
-    r1Loc = "/Users/tlshaw/Desktop/Rea/501-TCv15_S1_L001_R1_001.fastq.gz"
-    r2Loc = "/Users/tlshaw/Desktop/Rea/501-TCv15_S1_L001_R2_001.fastq.gz"
-    manifestLoc = "/Users/tlshaw/Desktop/Rea/501701_multipleadapter.csv"
-    outFolder = "/Users/tlshaw/Desktop/Rea/"
-    """
+
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r1': r1Loc = sys.argv[x+1]
         if sys.argv[x] == '-r2': r2Loc = sys.argv[x+1]
         if sys.argv[x] == '-m' : manifestLoc = sys.argv[x+1]
         if sys.argv[x] == '-o' : outFolder = sys.argv[x+1]
         if sys.argv[x] == '-h': print(help);sys.exit()
-    """
 
     header = True #Does the manifest have a header
 
