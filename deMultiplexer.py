@@ -80,13 +80,19 @@ if __name__=="__main__":
     #-m: Manifest location
     #-o: Folder to put output files into
 """
-    
+
+    r1Loc = "/Users/tlshaw/Desktop/Rea/501-TCv15_S1_L001_R1_001.fastq.gz"
+    r2Loc = "/Users/tlshaw/Desktop/Rea/501-TCv15_S1_L001_R2_001.fastq.gz"
+    manifestLoc = "/Users/tlshaw/Desktop/Rea/501701_multipleadapter.csv"
+    outFolder = "/Users/tlshaw/Desktop/Rea/"
+    """
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r1': r1Loc = sys.argv[x+1]
         if sys.argv[x] == '-r2': r2Loc = sys.argv[x+1]
         if sys.argv[x] == '-m' : manifestLoc = sys.argv[x+1]
         if sys.argv[x] == '-o' : outFolder = sys.argv[x+1]
         if sys.argv[x] == '-h': print(help);sys.exit()
+    """
 
     header = True #Does the manifest have a header
 
@@ -112,6 +118,8 @@ if __name__=="__main__":
         for count in counts:
             temp_count = count[0][len(line[2].rstrip()):]
             temp_count = multipleLigationTrim(temp_count, ranMerLen-2)
+            temp_count = multipleLigationTrim(temp_count, ranMerLen - 2)
+            temp_count = multipleLigationTrim(temp_count, ranMerLen - 2)
             counts2.append([temp_count,count[1],count[2]])
         tools.CSVWriter(counts2,outLoc=outFolder+name+"_counts.csv",header="Sequence,TotalReads,UniqueReads")
 
