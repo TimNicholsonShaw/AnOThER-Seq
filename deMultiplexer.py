@@ -1,6 +1,7 @@
 import counter, tools, sys, os
 import pandas as pd
 import re
+import distance
 
 def hitFinder(target, r1, r2):
     """
@@ -21,19 +22,19 @@ def hitFinder(target, r1, r2):
 
     return hits
 
-def hitFinder2 (target, r1, r2):
+def hitFinder2 (target, r1, r2, ham=0):
     hits = []
 
     for i in range(0, len(r2)):
 
         if len(target) > len(r2[i]): continue
 
-        if target == r2[i][:len(target)]:
+        if distance.hamming(target, r2[i][:len(target)]) <= ham:
             hits.append(r1[i])
 
     return hits
 
-def deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=0):
+def deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=0, ham=0):
     """
     Takes the name of the sample, the barcode sequence, and the length of the randomMer. Finds the barcode in read1,
     returns the corresponding reads in read2, performs the read count operation and outputs it to a folder with the
@@ -47,7 +48,7 @@ def deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=0):
     :return:
     """
     print(name, barcode, ranMerLen)
-    hits = hitFinder2(barcode, r1, r2)
+    hits = hitFinder2(barcode, r1, r2, ham)
 
     counts = counter.uniqueFilter(readList=hits, barcodeLength=ranMerLen,barcodeMismatch=mismatch)
     return counts
@@ -69,7 +70,6 @@ def multipleLigationTrim(read, ranmer):
 
 ########################################################################################################################
 
-
 if __name__=="__main__":
 
     help = """
@@ -79,14 +79,17 @@ if __name__=="__main__":
     #-r2: Read2 Location. Fastq format, gz compressed or not.
     #-m: Manifest location
     #-o: Folder to put output files into
+    #-x(default 0): hamming distance
 """
 
+    ham=0
 
     for x in range(0, len(sys.argv)):
         if sys.argv[x] == '-r1': r1Loc = sys.argv[x+1]
         if sys.argv[x] == '-r2': r2Loc = sys.argv[x+1]
         if sys.argv[x] == '-m' : manifestLoc = sys.argv[x+1]
         if sys.argv[x] == '-o' : outFolder = sys.argv[x+1]
+        if sys.argv[x] == '-x' : ham = int(sys.argv[x+1])
         if sys.argv[x] == '-h': print(help);sys.exit()
 
     header = True #Does the manifest have a header
@@ -108,7 +111,7 @@ if __name__=="__main__":
         name = line[0]
         barcode = line[2].rstrip() + line[3].rstrip()
         ranMerLen = int(line[4]) + 2
-        counts = deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=1)
+        counts = deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=1, ham=ham)
         counts2 = []
         for count in counts:
             temp_count = count[0][len(line[2].rstrip()):]
@@ -119,31 +122,12 @@ if __name__=="__main__":
         tools.CSVWriter(counts2,outLoc=outFolder+name+"_counts.csv",header="Sequence,TotalReads,UniqueReads")
 
     if flag: os.remove("temp.csv")
-"""
-base_dir = "/Users/tlshaw/Desktop/Rea/"
-r1Loc = base_dir + "501705_S2_L001_R1_001.fastq.gz"
-r2Loc = base_dir + "501705_S2_L001_R2_001.fastq.gz"
-manifestLoc = base_dir + "501705.csv"
-outFolder = base_dir
 
 
-r1 = counter.fastqParser(r1Loc)
-print(type(r1))
-r2 = counter.fastqParser(r2Loc, revComp=False)
-assert len(r1) == len (r2)
 
-header=True
-manifest = open(manifestLoc, 'r')
-if header: next(manifest)  # skips header
-for line in manifest:
-    line = line.split(",")
-    name = line[0]
-    barcode = line[2].rstrip().upper() + line[3].rstrip().upper()
-    ranMerLen = int(line[4]) + 2
-    counts = deMultiplexer(name, barcode, ranMerLen, r1, r2, mismatch=1)
-    counts2 = []
-    for count in counts:
-        counts2.append([count[0][len(line[2].rstrip()):], count[1], count[2]])
-    tools.CSVWriter(counts2, outLoc=outFolder + name + "_counts.csv", header="Sequence,TotalReads,UniqueReads")
+    
 
-"""
+
+
+
+
